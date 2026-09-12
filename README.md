@@ -3,6 +3,7 @@
 Free planning tools for Star Citizen, built by [Vonnie In The Verse](https://www.youtube.com/@Vonnie_InTheVerse).
 
 Live at **https://vonnie-intheverse.github.io/sc-tools/**
+SCA - **https://vonnie-intheverse.github.io/sc-tools/sca/**
 
 This is an unofficial Star Citizen fan site, not affiliated with the Cloud Imperium
 group of companies. All content on this site not authored by its host or users are
