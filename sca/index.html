@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjAwIj48ZyBmaWxsPSIjNUFBNkVBIiBjb2xvcj0iIzVBQTZFQSI+PGNpcmNsZSBjeD0iMTIwIiBjeT0iODQiIHI9IjY4IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIzIi8+PGNpcmNsZSBjeD0iMTIwIiBjeT0iODQiIHI9IjYwIiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIzIi8+PHBhdGggZD0iTTEyMCwxNSBRMTIyLjcsMzcuOTUgMTM4LDQyIFExMjIuNyw0Ni4wNSAxMjAsNjkgUTExNy4zLDQ2LjA1IDEwMiw0MiBRMTE3LjMsMzcuOTUgMTIwLDE1IFoiLz48cGF0aCBkPSJNODQsNTcgUTg2LjI1LDc2LjU1IDk5LDgwIFE4Ni4yNSw4My40NSA4NCwxMDMgUTgxLjc1LDgzLjQ1IDY5LDgwIFE4MS43NSw3Ni41NSA4NCw1NyBaIi8+PHBhdGggZD0iTTE1Niw1NCBRMTU4LjI1LDczLjU1IDE3MSw3NyBRMTU4LjI1LDgwLjQ1IDE1NiwxMDAgUTE1My43NSw4MC40NSAxNDEsNzcgUTE1My43NSw3My41NSAxNTYsNTQgWiIvPjxwYXRoIGQ9Ik0xMzgsOTIgUTEzOS4yLDEwMy4wNSAxNDYsMTA1IFExMzkuMiwxMDYuOTUgMTM4LDExOCBRMTM2LjgsMTA2Ljk1IDEzMCwxMDUgUTEzNi44LDEwMy4wNSAxMzgsOTIgWiIvPjxwYXRoIGQ9Ik0xMTYsMTAyIFExMTkuMTUsMTI4LjM1IDEzNywxMzMgUTExOS4xNSwxMzcuNjUgMTE2LDE2NCBRMTEyLjg1LDEzNy42NSA5NSwxMzMgUTExMi44NSwxMjguMzUgMTE2LDEwMiBaIi8+PGc+PHBhdGggZD0iTTEwNi44LDE1OC44IEE3Niw3NiAwIDAgMCAxODQuNSw0My43IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyLjQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTEuOCwxNjEuNikgcm90YXRlKDEyOC4wKSBzY2FsZSgxLjA2KSIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMzcuMCwxNjAuMSkgcm90YXRlKDEwOS40KSBzY2FsZSgxLjAxKSIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNjAuMywxNTAuOCkgcm90YXRlKDkwLjkpIHNjYWxlKDAuOTUpIi8+PHBhdGggZD0iTTAsMCBDOSwtNSAxNiwtMTYgMTcsLTM0IEM2LC0zMCAtMywtMTcgMCwwIFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE3OS41LDEzNC40KSByb3RhdGUoNzIuMykgc2NhbGUoMC45MCkiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTkyLjUsMTEyLjkpIHJvdGF0ZSg1My43KSBzY2FsZSgwLjg0KSIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxOTcuOSw4OC4zKSByb3RhdGUoMzUuMSkgc2NhbGUoMC43OSkiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTk1LjIsNjMuMikgcm90YXRlKDE2LjYpIHNjYWxlKDAuNzMpIi8+PHBhdGggZD0iTTAsMCBDOSwtNSAxNiwtMTYgMTcsLTM0IEM2LC0zMCAtMywtMTcgMCwwIFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE4NC43LDQwLjQpIHJvdGF0ZSgtMi4wKSBzY2FsZSgwLjY4KSIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMjUsMTcyKSByb3RhdGUoMTUyKSBzY2FsZSgwLjQyKSIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNDAsMCkgc2NhbGUoLTEsMSkiPjxwYXRoIGQ9Ik0xMDYuOCwxNTguOCBBNzYsNzYgMCAwIDAgMTg0LjUsNDMuNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJjdXJyZW50Q29sb3IiIHN0cm9rZS13aWR0aD0iMi40IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTExLjgsMTYxLjYpIHJvdGF0ZSgxMjguMCkgc2NhbGUoMS4wNikiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTM3LjAsMTYwLjEpIHJvdGF0ZSgxMDkuNCkgc2NhbGUoMS4wMSkiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTYwLjMsMTUwLjgpIHJvdGF0ZSg5MC45KSBzY2FsZSgwLjk1KSIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNzkuNSwxMzQuNCkgcm90YXRlKDcyLjMpIHNjYWxlKDAuOTApIi8+PHBhdGggZD0iTTAsMCBDOSwtNSAxNiwtMTYgMTcsLTM0IEM2LC0zMCAtMywtMTcgMCwwIFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE5Mi41LDExMi45KSByb3RhdGUoNTMuNykgc2NhbGUoMC44NCkiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTk3LjksODguMykgcm90YXRlKDM1LjEpIHNjYWxlKDAuNzkpIi8+PHBhdGggZD0iTTAsMCBDOSwtNSAxNiwtMTYgMTcsLTM0IEM2LC0zMCAtMywtMTcgMCwwIFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE5NS4yLDYzLjIpIHJvdGF0ZSgxNi42KSBzY2FsZSgwLjczKSIvPjxwYXRoIGQ9Ik0wLDAgQzksLTUgMTYsLTE2IDE3LC0zNCBDNiwtMzAgLTMsLTE3IDAsMCBaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxODQuNyw0MC40KSByb3RhdGUoLTIuMCkgc2NhbGUoMC42OCkiLz48cGF0aCBkPSJNMCwwIEM5LC01IDE2LC0xNiAxNywtMzQgQzYsLTMwIC0zLC0xNyAwLDAgWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTI1LDE3Mikgcm90YXRlKDE1Mikgc2NhbGUoMC40MikiLz48L2c+PC9nPjwvc3ZnPg==">
+<title>Exchange Matrix — Southern Cross Alliance</title>
+<style>
+  :root{
+    --deep:#071426;
+    --hull:#0E2440;
+    --hull-up:#163254;
+    --edge:#23486E;
+    --edge-soft:rgba(35,72,110,.55);
+    --star:#F2F7FF;
+    --sky:#5AA6EA;
+    --sky-dim:#3C6E9E;
+    --muted:#8FA8C4;
+    --good:#4FC79B;
+    --short:#E4874F;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--deep); color:var(--star);
+    font-family:'Segoe UI',system-ui,-apple-system,Helvetica,sans-serif;
+    font-size:14px; line-height:1.45;
+  }
+  .wrap{max-width:1140px;margin:0 auto;padding:26px 18px 48px}
+
+  /* ---- masthead ---- */
+  .mast{display:flex;align-items:center;gap:22px;padding-bottom:20px;
+        border-bottom:1px solid var(--edge)}
+  .crest{flex:none;height:96px;width:auto;opacity:.95}
+  .crest .ring{color:var(--sky)}
+  h1{margin:0;font-size:31px;font-weight:600;letter-spacing:-.015em;line-height:1.05}
+  .org{color:var(--sky);font-size:12.5px;letter-spacing:.06em;margin-top:5px}
+  .lede{color:var(--muted);font-size:13.5px;margin:9px 0 0;max-width:60ch}
+
+  /* ---- route chips ---- */
+  .routelabel{color:var(--sky-dim);font-size:12px;margin:22px 0 8px}
+  .routes{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));margin-bottom:24px}
+  .chip{background:var(--hull);border:1px solid var(--edge-soft);border-radius:4px;
+        padding:12px 13px;text-align:left;cursor:pointer;color:var(--star);
+        font:inherit;transition:border-color .12s,background .12s}
+  .chip:hover{border-color:var(--sky-dim)}
+  .chip[aria-pressed="true"]{background:var(--hull-up);border-color:var(--sky)}
+  .chip .ratio{font-size:21px;font-variant-numeric:tabular-nums;font-weight:500}
+  .chip[aria-pressed="true"] .ratio{color:var(--sky)}
+  .chip .ratio .arrow{color:var(--muted);font-size:15px;font-weight:400}
+  .chip .give{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35}
+
+  /* ---- panels ---- */
+  .cols{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+  .panel{background:var(--hull);border:1px solid var(--edge-soft);border-radius:4px;padding:16px;min-width:0}
+  .phead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+  .phead h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+  .phead span{font-size:12px;color:var(--muted)}
+
+  input{background:var(--deep);border:1px solid var(--edge-soft);color:var(--sky);
+        border-radius:3px;padding:4px 7px;font:inherit;font-variant-numeric:tabular-nums;
+        text-align:right;width:64px;outline:none}
+  input:focus{border-color:var(--sky)}
+  input::placeholder{color:var(--sky-dim)}
+  #filter{width:100%;text-align:left;color:var(--star);margin-bottom:12px;padding:6px 9px}
+
+  /* ---- catalogue ---- */
+  #catalog{max-height:470px;overflow-y:auto;padding-right:5px}
+  #catalog::-webkit-scrollbar{width:8px}
+  #catalog::-webkit-scrollbar-thumb{background:var(--edge);border-radius:4px}
+  .grp{font-size:11.5px;color:var(--sky-dim);border-bottom:1px solid var(--edge-soft);
+       padding-bottom:4px;margin:16px 0 6px}
+  .grp:first-child{margin-top:0}
+  .row{display:flex;align-items:center;gap:8px;padding:3px 0;
+       border-bottom:1px solid rgba(35,72,110,.3)}
+  .pick{flex:1;background:none;border:none;color:var(--star);font:inherit;
+        text-align:left;cursor:pointer;padding:3px 0;min-width:0}
+  .pick:hover .name{color:var(--sky)}
+  .pick.on .name{color:var(--sky)}
+  .name{font-size:13.5px;line-height:1.3}
+  .sub{font-size:11.5px;color:var(--muted)}
+  .step{flex:none;background:var(--hull-up);border:1px solid var(--edge-soft);color:var(--star);
+        width:23px;height:23px;border-radius:3px;cursor:pointer;font:inherit;line-height:1;padding:0}
+  .step:hover{border-color:var(--sky)}
+  .qty{font-variant-numeric:tabular-nums;color:var(--sky);min-width:16px;text-align:center}
+
+  /* ---- manifest ---- */
+  table{width:100%;border-collapse:collapse}
+  th{font-size:11.5px;color:var(--sky-dim);font-weight:500;text-align:right;padding:0 8px 7px}
+  th.l{text-align:left}
+  td{padding:8px;vertical-align:middle;text-align:right}
+  td.l{text-align:left}
+  tbody tr{border-top:1px solid rgba(35,72,110,.4)}
+  .cur td{background:var(--hull-up)}
+  .cur td:first-child{border-left:2px solid var(--sky)}
+  .cur.bit td:first-child{border-left-color:var(--good)}
+  .num{font-variant-numeric:tabular-nums;font-size:15px}
+  .from{font-size:11px;color:var(--sky-dim);margin-top:2px}
+  .cost{font-variant-numeric:tabular-nums;font-size:16.5px;color:var(--sky);white-space:nowrap}
+  .cur.bit .cost{color:var(--good)}
+  .done{color:var(--good)}
+  .short{color:var(--short)}
+  .empty{color:var(--muted);font-size:13.5px;padding:16px 0}
+  .scroll{overflow-x:auto}
+  .scroll table{min-width:430px}
+
+  .warn{margin-top:13px;padding:10px 12px;border:1px solid var(--short);border-radius:3px;
+        background:rgba(228,135,79,.09);font-size:12.5px;line-height:1.5}
+  .gates{margin-top:13px;padding-top:12px;border-top:1px solid var(--edge-soft);font-size:12.5px}
+  .gates b{color:var(--short);font-weight:600}
+  .gates span{color:var(--muted)}
+  .clear{margin-top:15px;background:none;border:1px solid var(--edge-soft);color:var(--muted);
+         padding:6px 13px;border-radius:3px;cursor:pointer;font:inherit;font-size:12.5px}
+  .clear:hover{border-color:var(--sky);color:var(--star)}
+
+
+  .notice{margin-top:26px;padding:15px 17px;border:1px solid var(--edge);
+          border-radius:4px;background:var(--hull);font-size:13.5px;
+          color:var(--star);line-height:1.6}
+  .notice a{color:var(--sky)}
+  .byline{margin-top:14px;font-size:13px;color:var(--muted)}
+  .byline a{color:var(--sky);text-decoration:none}
+  .byline a:hover{text-decoration:underline}
+  .byline .code{font-variant-numeric:tabular-nums;color:var(--star)}
+  footer{color:var(--muted);font-size:11.5px;margin-top:22px;max-width:76ch;line-height:1.65}
+  footer em{color:var(--star);font-style:normal}
+  @media (max-width:520px){ h1{font-size:25px} .crest{height:64px} .wrap{padding:20px 13px 36px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="mast">
+    <svg class="crest" viewBox="0 0 240 200" role="img" aria-label="Southern Cross Alliance"><g fill="currentColor"><circle cx="120" cy="84" r="68" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="120" cy="84" r="60" fill="none" stroke="currentColor" stroke-width="3"/><path d="M120,15 Q122.7,37.95 138,42 Q122.7,46.05 120,69 Q117.3,46.05 102,42 Q117.3,37.95 120,15 Z"/><path d="M84,57 Q86.25,76.55 99,80 Q86.25,83.45 84,103 Q81.75,83.45 69,80 Q81.75,76.55 84,57 Z"/><path d="M156,54 Q158.25,73.55 171,77 Q158.25,80.45 156,100 Q153.75,80.45 141,77 Q153.75,73.55 156,54 Z"/><path d="M138,92 Q139.2,103.05 146,105 Q139.2,106.95 138,118 Q136.8,106.95 130,105 Q136.8,103.05 138,92 Z"/><path d="M116,102 Q119.15,128.35 137,133 Q119.15,137.65 116,164 Q112.85,137.65 95,133 Q112.85,128.35 116,102 Z"/><g><path d="M106.8,158.8 A76,76 0 0 0 184.5,43.7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(111.8,161.6) rotate(128.0) scale(1.06)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(137.0,160.1) rotate(109.4) scale(1.01)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(160.3,150.8) rotate(90.9) scale(0.95)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(179.5,134.4) rotate(72.3) scale(0.90)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(192.5,112.9) rotate(53.7) scale(0.84)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(197.9,88.3) rotate(35.1) scale(0.79)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(195.2,63.2) rotate(16.6) scale(0.73)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(184.7,40.4) rotate(-2.0) scale(0.68)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(125,172) rotate(152) scale(0.42)"/></g><g transform="translate(240,0) scale(-1,1)"><path d="M106.8,158.8 A76,76 0 0 0 184.5,43.7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(111.8,161.6) rotate(128.0) scale(1.06)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(137.0,160.1) rotate(109.4) scale(1.01)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(160.3,150.8) rotate(90.9) scale(0.95)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(179.5,134.4) rotate(72.3) scale(0.90)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(192.5,112.9) rotate(53.7) scale(0.84)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(197.9,88.3) rotate(35.1) scale(0.79)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(195.2,63.2) rotate(16.6) scale(0.73)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(184.7,40.4) rotate(-2.0) scale(0.68)"/><path d="M0,0 C9,-5 16,-16 17,-34 C6,-30 -3,-17 0,0 Z" transform="translate(125,172) rotate(152) scale(0.42)"/></g></g></svg>
+    <div>
+      <h1>Wikelo Exchange Matrix</h1>
+      <div class="org">SOUTHERN CROSS ALLIANCE · LOGISTICS</div>
+      <p class="lede">Queue the contracts the org is chasing. The manifest works backwards
+        through the Favor exchange to the raw scrip, ore and pearls someone actually has to haul.</p>
+    </div>
+  </header>
+
+  <div class="routelabel">Favor route — pick the feedstock we'd rather spend</div>
+  <div class="routes" id="routes"></div>
+
+  <div class="cols">
+    <section class="panel">
+      <div class="phead"><h2>Contracts</h2><span id="ccount"></span></div>
+      <input id="filter" placeholder="Filter by ship or contract name" autocomplete="off">
+      <div id="catalog"></div>
+    </section>
+
+    <section class="panel">
+      <div class="phead"><h2>Haul manifest</h2><span id="qcount"></span></div>
+      <div id="manifest"></div>
+    </section>
+  </div>
+
+  <div class="notice">
+    This is an unofficial Star Citizen fan site, not affiliated with the Cloud Imperium
+    group of companies. All content on this site not authored by its host or users are
+    property of their respective owners.
+    <div style="margin-top:8px"><a href="https://robertsspaceindustries.com"
+      target="_blank" rel="noopener">Official site: robertsspaceindustries.com</a></div>
+  </div>
+
+  <footer>
+    Recipes verified for <em id="verified"></em>. Wikelo is a live-service
+    system and quantities shift between builds — open the active contract and check every
+    line before moving a rare stack. Unlock requires the one-off <em>Wikelo Arrive to
+    System</em> turn-in: 1&times; Vestal Water, 3&times; Tundra Kopion Horn. Turn in at the
+    station the active contract names, not the nearest Emporium.
+  </footer>
+</div>
+
+<script src="../data/recipes.js"></script>
+<script>
+
+
+const fmt=n=>n.toLocaleString("en-AU");
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const key=s=>s.replace(/[^a-z0-9]/gi,"_");
+
+let queue={max:1}, route="mg", owned={}, filter="";
+const chosen=()=>ROUTES.find(x=>x.id===route);
+
+/* ---------- route chips ---------- */
+function renderRoutes(){
+  document.getElementById("routes").innerHTML=ROUTES.map(x=>
+    `<button class="chip" data-route="${x.id}" aria-pressed="${x.id===route}">
+       <div class="ratio">${x.rate} <span class="arrow">&rarr;</span> 1</div>
+       <div class="give">${esc(x.give)} per Favor</div>
+     </button>`).join("");
+}
+
+/* ---------- catalogue ---------- */
+function renderCatalog(){
+  const f=filter.trim().toLowerCase();
+  const vis=CATALOG.filter(c=>!f||c.reward.toLowerCase().includes(f)||c.contract.toLowerCase().includes(f));
+  document.getElementById("ccount").textContent=CATALOG.length+" contracts";
+  document.getElementById("catalog").innerHTML=GROUPS.map(g=>{
+    const items=vis.filter(c=>c.g===g); if(!items.length) return "";
+    return `<div class="grp">${esc(g)}</div>`+items.map(c=>{
+      const n=queue[c.id]||0, fav=c.req.find(x=>x.n===FAVOUR);
+      return `<div class="row">
+        <button class="pick${n?" on":""}" data-add="${c.id}">
+          <div class="name">${esc(c.reward)}</div>
+          <div class="sub">${fav?fav.q+" Favor":"no Favor cost"}${c.rep?" &middot; "+esc(c.rep):""}</div>
+        </button>
+        ${n?`<button class="step" data-sub="${c.id}">&minus;</button>
+             <span class="qty">${n}</span>
+             <button class="step" data-add="${c.id}">+</button>`:""}
+      </div>`;
+    }).join("");
+  }).join("");
+}
+
+/* ---------- totals ---------- */
+function totals(){
+  const m=new Map();
+  for(const id in queue){
+    const it=CATALOG.find(c=>c.id===id); if(!it) continue;
+    it.req.forEach(({n,q})=>m.set(n,(m.get(n)||0)+q*queue[id]));
+  }
+  return m;
+}
+
+function compute(){
+  const t=totals();
+  const favNeed=t.get(FAVOUR)||0, bitNeed=t.get(BIT)||0;
+  const netFav=Math.max(0,favNeed-(+owned[FAVOUR]||0));
+  const netBit=Math.max(0,bitNeed-(+owned[BIT]||0));
+  const rt=chosen();
+  const rows=[];
+  t.forEach((q,n)=>{ if(n!==FAVOUR&&n!==BIT) rows.push({name:n,direct:q,conv:0,from:null}); });
+
+  if(netFav>0){
+    const cost=netFav*rt.rate, note=`${netFav} Favor${netFav===1?"":"s"} &times; ${rt.rate}`;
+    const hit=rows.find(x=>x.name===rt.give);
+    if(hit){hit.conv+=cost;hit.from=note;} else rows.push({name:rt.give,direct:0,conv:cost,from:note});
+  }
+  if(netBit>0){
+    const cost=netBit*BITRATE.rate, note=`${netBit} Bit${netBit===1?"":"s"} &times; ${BITRATE.rate}`;
+    const hit=rows.find(x=>x.name===BITRATE.give);
+    if(hit){hit.conv+=cost;hit.from=hit.from?hit.from+", "+note:note;}
+    else rows.push({name:BITRATE.give,direct:0,conv:cost,from:note});
+  }
+  rows.sort((a,b)=>(b.direct+b.conv)-(a.direct+a.conv));
+  return {t,favNeed,bitNeed,netFav,netBit,rows,rt,
+          conflict:netFav>0&&t.has(rt.give)?t.get(rt.give):0};
+}
+
+/* ---------- manifest ---------- */
+function renderManifest(){
+  const n=Object.keys(queue).length;
+  document.getElementById("qcount").textContent=n?n+" project"+(n===1?"":"s")+" queued":"";
+  const box=document.getElementById("manifest");
+  if(!n){ box.innerHTML='<div class="empty">Queue a contract and the full material list builds here.</div>'; return; }
+
+  const c=compute();
+  let cur="";
+  if(c.favNeed||c.bitNeed){
+    cur='<table><tbody>';
+    if(c.favNeed) cur+=currencyRow(FAVOUR,"",c.favNeed,c.netFav);
+    if(c.bitNeed) cur+=currencyRow(BIT,"bit",c.bitNeed,c.netBit);
+    cur+='</tbody></table>';
+  }
+
+  const body=c.rows.map(m=>{
+    const total=m.direct+m.conv, have=+owned[m.name]||0, left=Math.max(0,total-have);
+    return `<tr>
+      <td class="l"><div style="font-size:13px">${esc(m.name)}</div>
+        ${m.from?`<div class="from" id="from_${key(m.name)}">${m.direct?fmt(m.direct)+" direct + ":""}${fmt(m.conv)} for ${m.from}</div>`:""}</td>
+      <td><span class="num" id="tot_${key(m.name)}">${fmt(total)}</span></td>
+      <td><input type="number" min="0" data-have="${esc(m.name)}" placeholder="0" value="${owned[m.name]||""}"></td>
+      <td><span class="num ${left===0?"done":"short"}" id="left_${key(m.name)}">${fmt(left)}</span></td>
+    </tr>`;}).join("");
+
+  const gates=Object.keys(queue).map(id=>CATALOG.find(x=>x.id===id)).filter(x=>x&&x.rep);
+
+  box.innerHTML = cur + `<div class="scroll"><table>
+      <thead><tr><th class="l">Material</th><th>Total</th><th>Have</th><th>To farm</th></tr></thead>
+      <tbody>${body}</tbody></table></div>`
+    + (c.conflict?`<div class="warn">This queue also needs ${fmt(c.conflict)}&times; ${esc(c.rt.give)} as a direct ingredient. Burning the same material for Favors will eat our own stock — switch routes unless we're genuinely in surplus.</div>`:"")
+    + (gates.length?`<div class="gates">${gates.map(x=>`<div><b>${esc(x.rep)}</b> <span>required — ${esc(x.reward)}</span></div>`).join("")}</div>`:"")
+    + `<button class="clear" id="clear">Clear manifest</button>`;
+}
+
+function currencyRow(label,cls,need,net){
+  const rt=chosen();
+  const cost = label===FAVOUR
+    ? fmt(net*rt.rate)+" "+esc(rt.give)
+    : fmt(net*BITRATE.rate)+" SCU Quantainium";
+  return `<tr class="cur ${cls}">
+    <td class="l"><div style="font-size:13.5px">${esc(label)}</div>
+      <div class="sub" id="need_${key(label)}">${need} needed &middot; ${net} to earn</div></td>
+    <td style="width:82px"><input type="number" min="0" data-have="${esc(label)}" placeholder="have" value="${owned[label]||""}"></td>
+    <td><span class="cost" id="cost_${key(label)}">${cost}</span></td>
+  </tr>`;
+}
+
+/* update numbers in place so focused inputs don't get rebuilt */
+function refresh(){
+  const c=compute();
+  if(c.favNeed){
+    const el=document.getElementById("need_"+key(FAVOUR));
+    if(el) el.innerHTML=`${c.favNeed} needed &middot; ${c.netFav} to earn`;
+    const co=document.getElementById("cost_"+key(FAVOUR));
+    if(co) co.textContent=fmt(c.netFav*c.rt.rate)+" "+c.rt.give;
+  }
+  if(c.bitNeed){
+    const el=document.getElementById("need_"+key(BIT));
+    if(el) el.innerHTML=`${c.bitNeed} needed &middot; ${c.netBit} to earn`;
+    const co=document.getElementById("cost_"+key(BIT));
+    if(co) co.textContent=fmt(c.netBit*BITRATE.rate)+" SCU Quantainium";
+  }
+  c.rows.forEach(m=>{
+    const total=m.direct+m.conv, have=+owned[m.name]||0, left=Math.max(0,total-have);
+    const t=document.getElementById("tot_"+key(m.name)); if(t) t.textContent=fmt(total);
+    const f=document.getElementById("from_"+key(m.name));
+    if(f&&m.from) f.innerHTML=(m.direct?fmt(m.direct)+" direct + ":"")+fmt(m.conv)+" for "+m.from;
+    const l=document.getElementById("left_"+key(m.name));
+    if(l){ l.textContent=fmt(left); l.className="num "+(left===0?"done":"short"); }
+  });
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-add],[data-sub],[data-route],#clear");
+  if(!t) return;
+  if(t.id==="clear"){ queue={}; owned={}; renderCatalog(); renderManifest(); return; }
+  if(t.dataset.route){ route=t.dataset.route; renderRoutes(); renderManifest(); return; }
+  const id=t.dataset.add||t.dataset.sub;
+  if(t.dataset.add) queue[id]=(queue[id]||0)+1;
+  else { const n=(queue[id]||0)-1; if(n<=0) delete queue[id]; else queue[id]=n; }
+  renderCatalog(); renderManifest();
+});
+document.addEventListener("input",e=>{
+  if(e.target.id==="filter"){ filter=e.target.value; renderCatalog(); return; }
+  const k=e.target.dataset.have;
+  if(k!==undefined){ owned[k]=e.target.value; refresh(); }
+});
+
+
+const vEl=document.getElementById("verified");
+if(vEl) vEl.textContent=typeof VERIFIED!=="undefined"?VERIFIED:"an unknown build";
+
+renderRoutes(); renderCatalog(); renderManifest();
+</script>
+</body>
+</html>
