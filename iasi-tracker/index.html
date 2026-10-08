@@ -86,7 +86,7 @@ input[type=number]{font-family:var(--mono);text-align:right;font-variant-numeric
 .keys{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0}
 kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;padding:0 5px;color:var(--fg);background:var(--box)}
 .tablewrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:900px;table-layout:fixed}
+table{border-collapse:collapse;width:100%;min-width:800px;table-layout:fixed}
 th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:400;text-align:left;padding:4px 4px 6px}
 td{padding:3px 4px}
 td input,td select{width:100%}
@@ -95,6 +95,8 @@ td.act{text-align:center;width:44px}
 .field{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px;align-items:center;font-size:13px}
 .field small{display:block;color:var(--muted);font-size:11px}
 .note{color:var(--muted);font-size:12px;margin:0;max-width:80ch}
+.steps{margin:0;padding-left:20px;display:grid;gap:6px;font-size:13px}
+a.btn{text-decoration:none;display:inline-block}
 .obs code{font-family:var(--mono);font-size:12px;background:var(--box);padding:2px 6px;word-break:break-all}
 footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--box);border:1px solid var(--cyan);padding:8px 14px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
@@ -164,7 +166,7 @@ body.overlay .ro{width:360px}
         <p class="note">One row per contract type. Points, payout and SCU are per run. Leave a name blank to hide a row. Starting values are from 4.10.2 PTU testing, so check them against your first live run.</p>
         <div class="tablewrap">
           <table>
-            <colgroup><col style="width:190px"><col style="width:120px"><col span="7"></colgroup>
+            <colgroup><col style="width:160px"><col style="width:125px"><col style="width:70px"><col style="width:95px"><col span="5"></colgroup>
             <thead><tr><th>Name</th><th>Lane</th><th>Points</th><th>Payout</th><th>Hand-in SCU</th><th>Kept SCU</th><th>RMC SCU</th><th>Weapons</th><th>Runs</th></tr></thead>
             <tbody id="mBody"></tbody>
           </table>
@@ -188,6 +190,19 @@ body.overlay .ro{width:360px}
           <button class="btn ghost" id="btnDefaults" type="button">Restore starting values</button>
           <span class="note" id="confirmMsg"></span>
         </div>
+      </section>
+
+      <section class="card">
+        <h2>Desktop overlay (Windows)</h2>
+        <p class="note">An always-on-top version with hotkeys that work while you're in game. Clicks pass straight through it, so it never takes focus from Star Citizen.</p>
+        <ol class="steps">
+          <li>Install <b>AutoHotkey v2</b> from <a href="https://www.autohotkey.com" target="_blank" rel="noopener">autohotkey.com</a>.</li>
+          <li>Put the file in its own folder and double-click it.</li>
+          <li>Run Star Citizen in <b>Borderless</b>.</li>
+          <li><kbd>F9</kbd> run · <kbd>F8</kbd> undo · <kbd>F6</kbd> mission · <kbd>F10</kbd> timer (hold to reset) · <kbd>F7</kbd> move. Double-click the tray icon to edit missions and prices.</li>
+        </ol>
+        <div class="row"><a class="btn primary" href="IASI_Overlay.ahk" download>Download IASI_Overlay.ahk</a></div>
+        <p class="note">To show it on stream, add a Window Capture of "IASI Overlay" in OBS, or use Display Capture.</p>
       </section>
 
       <section class="card obs">
