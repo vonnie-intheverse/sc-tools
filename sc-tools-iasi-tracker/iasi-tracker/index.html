@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IASI Event Tracker</title>
+<meta name="description" content="Free run tracker for the Star Citizen IASI event: lane and main-track progress, session timer, aUEC per hour, and an OBS overlay mode.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: readout panel (the bit people screen-capture) beside the controls and mission sheet. Overlay mode shows the readout alone. */
+:root{
+  --bg:#0B1117; --panel:#0E141B; --box:#16202A; --line:#2A3846; --fg:#EEF3F7; --muted:#93A3B4; --dim:#5A6878;
+  --orange:#FF7A1A; --cyan:#84C3E0; --hit:#15343F; --red:#FF6B6B;
+  --display:"Chakra Petch","Bahnschrift","Segoe UI",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.45}
+a{color:var(--cyan)}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+.page{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:24px 48px;display:grid;gap:20px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1.05;margin:4px 0 0}
+.lede{color:var(--muted);margin:6px 0 0;max-width:70ch}
+.toplinks{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:12px}
+
+.grid{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+
+/* ---------- readout ---------- */
+.ro{background:var(--panel);border:1px solid var(--orange);padding:16px;display:grid;gap:12px;min-width:0}
+.ro-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ro-h .m{font-family:var(--display);font-weight:700;font-size:18px;text-transform:uppercase;line-height:1.1}
+.ro-h .b{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap}
+.timeline{background:var(--box);display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;padding:8px 10px}
+.timeline .clock{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.timeline .timer{font-family:var(--display);font-weight:700;font-size:28px;text-align:center;font-variant-numeric:tabular-nums;color:var(--muted)}
+.timeline .timer.live{color:var(--fg)}
+.timeline .state{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted)}
+.timeline .state.live{color:var(--orange)}
+.runs{display:flex;align-items:baseline;gap:8px}
+.runs .n{font-family:var(--display);font-weight:700;font-size:44px;line-height:1;color:var(--orange);font-variant-numeric:tabular-nums}
+.runs .of{font-family:var(--display);font-size:18px;color:var(--muted)}
+.runs .lp{margin-left:auto;text-align:right;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+.runs .lp b{display:block;font-size:14px;color:var(--fg);letter-spacing:0}
+.bar{position:relative;height:12px;background:var(--box)}
+.bar .fill{position:absolute;inset:0 auto 0 0;background:var(--orange);width:0}
+.bar.main{height:8px}.bar.main .fill{background:var(--cyan)}
+@media (prefers-reduced-motion:no-preference){.bar .fill{transition:width .3s ease}}
+.bar .tick{position:absolute;top:-5px;width:2px;height:4px;background:var(--dim)}
+.bar .tick.hit{background:var(--cyan)}
+.chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.chip{background:var(--box);text-align:center;padding:5px 2px;font-family:var(--mono);font-size:10px;color:var(--muted);line-height:1.3}
+.chip b{display:block;font-size:11px;color:var(--fg)}
+.chip.hit{background:var(--hit);color:var(--cyan)}.chip.hit b{color:var(--cyan)}
+.mainrow{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em}
+.mainrow b{color:var(--fg);font-size:12px;letter-spacing:0}
+.small{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.pair{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:4px;font-size:13px}
+.pair span{color:var(--muted)}
+.pair b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.earned{background:var(--box);display:flex;justify-content:space-between;align-items:center;padding:8px 12px}
+.earned span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted)}
+.earned b{font-family:var(--display);font-weight:700;font-size:24px;color:var(--cyan);font-variant-numeric:tabular-nums}
+
+/* ---------- controls ---------- */
+.side{display:grid;gap:16px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);padding:16px;display:grid;gap:12px;min-width:0}
+.card h2{font-family:var(--display);font-weight:600;font-size:17px;margin:0;letter-spacing:.02em}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{background:var(--box);border:1px solid var(--line);padding:8px 14px;cursor:pointer;font-weight:600}
+.btn:hover{border-color:var(--orange)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:#140A02}
+.btn.ghost{background:transparent;font-weight:400}
+select,input[type=number],input[type=text]{background:var(--box);border:1px solid var(--line);padding:7px 8px;min-width:0}
+input[type=number]{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.keys{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0}
+kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-bottom-width:2px;padding:0 5px;color:var(--fg);background:var(--box)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:900px;table-layout:fixed}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;font-weight:400;text-align:left;padding:4px 4px 6px}
+td{padding:3px 4px}
+td input,td select{width:100%}
+td.act{text-align:center;width:44px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px 18px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:8px;align-items:center;font-size:13px}
+.field small{display:block;color:var(--muted);font-size:11px}
+.note{color:var(--muted);font-size:12px;margin:0;max-width:80ch}
+.obs code{font-family:var(--mono);font-size:12px;background:var(--box);padding:2px 6px;word-break:break-all}
+footer{color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--box);border:1px solid var(--cyan);padding:8px 14px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+
+/* ---------- overlay mode (?overlay) ---------- */
+body.overlay{background:var(--overlay-bg,#00FF00)}
+body.overlay .page{display:block;padding:12px;max-width:none}
+body.overlay .top,body.overlay .side,body.overlay footer{display:none}
+body.overlay .grid{display:block}
+body.overlay .ro{width:360px}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Star Citizen 4.10.2 · IASI Event</div>
+      <h1>IASI Event Tracker</h1>
+      <p class="lede">Log your runs, watch each lane fill, and see what you're really earning per hour. Everything saves in your browser.</p>
+    </div>
+    <nav class="toplinks"><a href="../">All tools</a><a href="IASI_Overlay.ahk" download>Desktop overlay (AutoHotkey)</a></nav>
+  </header>
+
+  <div class="grid">
+    <!-- READOUT -->
+    <section class="ro" aria-live="polite" aria-label="Event progress readout">
+      <div class="ro-h"><span class="m" id="rName">–</span><span class="b">IASI · 4.10.2</span></div>
+      <div class="timeline"><span class="clock" id="rClock">--:--</span><span class="timer" id="rTimer">0:00:00</span><span class="state" id="rState">READY</span></div>
+      <div class="runs"><span class="n" id="rRuns">0</span><span class="of" id="rOf">/ – runs</span><span class="lp"><span id="rLaneLbl">COLLECTION</span> POINTS<b id="rLanePts">0 / 10,000</b></span></div>
+      <div class="bar" id="rBar"><div class="fill" id="rFill"></div></div>
+      <div class="chips" id="rChips"></div>
+      <div class="mainrow"><span>MAIN TRACK</span><b id="rMainPts">0 / 30,000</b></div>
+      <div class="bar main"><div class="fill" id="rMainFill"></div></div>
+      <div class="small" id="rMainTiers"></div>
+      <div class="small" id="rLanes"></div>
+      <div class="pairs">
+        <div class="pair"><span>Payouts</span><b id="vPay">0</b></div>
+        <div class="pair"><span>CMAT</span><b id="vCmat">0 SCU</b></div>
+        <div class="pair"><span>RMC</span><b id="vRmc">0 SCU</b></div>
+        <div class="pair"><span>Weapons</span><b id="vGuns">0</b></div>
+        <div class="pair"><span>Runs/hr</span><b id="vRph">–</b></div>
+        <div class="pair"><span>aUEC/hr</span><b id="vAph">–</b></div>
+      </div>
+      <div class="earned"><span>EARNED SO FAR</span><b id="vEarned">0</b></div>
+    </section>
+
+    <!-- CONTROLS -->
+    <div class="side">
+      <section class="card">
+        <h2>Log runs</h2>
+        <div class="row">
+          <label for="active" class="note" style="margin:0">Mission</label>
+          <select id="active"></select>
+        </div>
+        <div class="row">
+          <button class="btn primary" id="btnRun" type="button">+1 run</button>
+          <button class="btn" id="btnUndo" type="button">Undo</button>
+          <button class="btn" id="btnTimer" type="button">Start timer</button>
+          <button class="btn ghost" id="btnTimerReset" type="button">Reset timer</button>
+        </div>
+        <p class="keys">Keys while this tab is focused: <kbd>Space</kbd> log a run · <kbd>Backspace</kbd> undo · <kbd>M</kbd> next mission · <kbd>T</kbd> start or pause timer</p>
+      </section>
+
+      <section class="card">
+        <h2>Missions</h2>
+        <p class="note">One row per contract type. Points, payout and SCU are per run. Leave a name blank to hide a row. Starting values are from 4.10.2 PTU testing, so check them against your first live run.</p>
+        <div class="tablewrap">
+          <table>
+            <colgroup><col style="width:190px"><col style="width:120px"><col span="7"></colgroup>
+            <thead><tr><th>Name</th><th>Lane</th><th>Points</th><th>Payout</th><th>Hand-in SCU</th><th>Kept SCU</th><th>RMC SCU</th><th>Weapons</th><th>Runs</th></tr></thead>
+            <tbody id="mBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Prices and starting points</h2>
+        <div class="fields">
+          <div class="field"><label for="cYield">CMAT yield<small>0.308 = 12 from 39 SCU</small></label><input type="number" id="cYield" step="0.001" min="0" max="1"></div>
+          <div class="field"><label for="cCmat">CMAT price<small>aUEC per SCU</small></label><input type="number" id="cCmat" step="100" min="0"></div>
+          <div class="field"><label for="cRmc">RMC price<small>aUEC per SCU</small></label><input type="number" id="cRmc" step="100" min="0"></div>
+          <div class="field"><label for="cGun">Weapon price<small>aUEC each</small></label><input type="number" id="cGun" step="100" min="0"></div>
+          <div class="field"><label for="s1">Collection points<small>earned before tracking</small></label><input type="number" id="s1" step="1" min="0"></div>
+          <div class="field"><label for="s2">Transport points<small>earned before tracking</small></label><input type="number" id="s2" step="1" min="0"></div>
+          <div class="field"><label for="s3">Defence points<small>earned before tracking</small></label><input type="number" id="s3" step="1" min="0"></div>
+        </div>
+        <p class="note">Earned = payout + kept SCU refined to CMAT + RMC + weapons, at your prices. Values assume you sell everything and leave out fuel, refinery fees and repairs.</p>
+        <div class="row">
+          <button class="btn ghost" id="btnResetRuns" type="button">Reset all runs</button>
+          <button class="btn ghost" id="btnDefaults" type="button">Restore starting values</button>
+          <span class="note" id="confirmMsg"></span>
+        </div>
+      </section>
+
+      <section class="card obs">
+        <h2>Use it in OBS</h2>
+        <p class="note">Add a <b>Browser source</b> with this address. It shows the readout alone on chroma green, so add a Chroma Key filter. Use <code>&amp;bg=transparent</code> instead if you'd rather skip the key.</p>
+        <p class="note"><code id="obsUrl"></code></p>
+        <p class="note">The browser source keeps its own progress, separate from this tab. To log runs in it, right-click the source in OBS and choose <b>Interact</b>. For hotkeys that work while you're in game, use the AutoHotkey desktop overlay instead.</p>
+      </section>
+    </div>
+  </div>
+
+  <footer>
+    <span>Free fan-made tool by Vonnie in the Verse. Not affiliated with Cloud Imperium Games.</span>
+    <span>Star Citizen®, Roberts Space Industries® and Cloud Imperium® are trademarks of Cloud Imperium Rights LLC.</span>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+  const LANES=["Collection","Transport","Defence"];
+  const CAP=10000, MAIN=30000;
+  const DEFAULTS={
+    missions:[
+      {name:"Salvage M (quick)",lane:0,pts:255,pay:42000,hand:39,keep:8,rmc:0,guns:0,runs:0},
+      {name:"Salvage M (full UCM)",lane:0,pts:255,pay:42000,hand:39,keep:80,rmc:0,guns:0,runs:0},
+      {name:"Salvage M (full strip)",lane:0,pts:255,pay:42000,hand:39,keep:96,rmc:8,guns:4,runs:0},
+      {name:"Salvage S",lane:0,pts:183,pay:30000,hand:1,keep:2,rmc:0,guns:0,runs:0},
+      {name:"Transport",lane:1,pts:0,pay:0,hand:0,keep:0,rmc:0,guns:0,runs:0},
+      {name:"Defence",lane:2,pts:0,pay:0,hand:0,keep:0,rmc:0,guns:0,runs:0}
+    ],
+    yield:0.308,cmat:12000,rmc:9000,gun:8199,start:[0,0,0],active:0,timer:{acc:0,start:null}
+  };
+  const KEY="iasi-tracker-v1";
+  const params=new URLSearchParams(location.search);
+  const overlay=params.has("overlay");
+  if(overlay){
+    document.body.classList.add("overlay");
+    const bg=params.get("bg");
+    if(bg==="transparent") document.body.style.setProperty("--overlay-bg","transparent");
+    else if(bg && /^[0-9a-fA-F]{6}$/.test(bg)) document.body.style.setProperty("--overlay-bg","#"+bg);
+  }
+
+  const clone=o=>JSON.parse(JSON.stringify(o));
+  let S=clone(DEFAULTS);
+  try{const raw=localStorage.getItem(KEY); if(raw){const d=JSON.parse(raw); S=Object.assign(clone(DEFAULTS),d); if(!Array.isArray(S.missions)||S.missions.length!==6) S.missions=clone(DEFAULTS.missions);}}catch(e){}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+  const $=id=>document.getElementById(id);
+  const num=v=>{const n=parseFloat(v);return isFinite(n)&&n>=0?n:0};
+  const fmt=n=>Math.round(n).toLocaleString("en-AU");
+  const short=n=>{const a=Math.abs(n),s=n<0?"−":"";if(a>=1e6)return s+(a/1e6).toFixed(2)+"M";if(a>=1e3)return s+Math.round(a/1e3)+"k";return s+Math.round(a)};
+  const hms=ms=>{const t=Math.floor(ms/1000);return Math.floor(t/3600)+":"+String(Math.floor(t%3600/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};
+  const live=m=>m.name.trim()!=="";
+  const earnedOf=m=>m.pay+m.keep*S.yield*S.cmat+m.rmc*S.rmc+m.guns*S.gun;
+  const lanePts=l=>Math.min(CAP,S.start[l]+S.missions.reduce((a,m)=>a+(live(m)&&m.lane===l?m.runs*m.pts:0),0));
+  const elapsed=()=>S.timer.acc+(S.timer.start?Date.now()-S.timer.start:0);
+  const toast=msg=>{const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),1400)};
+
+  function fixActive(){ if(!live(S.missions[S.active])){const i=S.missions.findIndex(live); S.active=i<0?0:i;} }
+
+  // ---------- readout ----------
+  const TIERS=[[.2,"T1"],[.4,"T2"],[.65,"T3"],[1,"CAP"]];
+  const MTIERS=[[.15,"M1"],[.33,"M2"],[.8,"M3"],[1,"M4"]];
+  TIERS.forEach(t=>{const s=document.createElement("span");s.className="tick";s.style.left=`calc(${t[0]*100}% - ${t[0]===1?2:1}px)`;$("rBar").appendChild(s)});
+  let totals={runs:0,earned:0};
+
+  function render(){
+    fixActive();
+    const m=S.missions[S.active], lp=lanePts(m.lane);
+    $("rName").textContent=m.name+(m.pts>0?"":" · set points");
+    const left=m.pts>0?Math.ceil(Math.max(0,CAP-lp)/m.pts):null;
+    $("rRuns").textContent=fmt(m.runs);
+    $("rOf").textContent=left===null?"/ ? runs":"/ "+fmt(m.runs+left)+" runs";
+    $("rLaneLbl").textContent=LANES[m.lane].toUpperCase();
+    $("rLanePts").textContent=fmt(lp)+" / "+fmt(CAP);
+    $("rFill").style.width=(lp/CAP*100)+"%";
+    $("rBar").querySelectorAll(".tick").forEach((el,i)=>el.classList.toggle("hit",lp>=CAP*TIERS[i][0]));
+    $("rChips").innerHTML=TIERS.map(t=>{const need=CAP*t[0],hit=lp>=need;
+      const txt=hit?"done":(m.pts>0?Math.ceil((need-lp)/m.pts)+" to go":short(need-lp)+" pts");
+      return `<div class="chip${hit?" hit":""}"><b>${t[1]}</b>${txt}</div>`}).join("");
+    const mp=lanePts(0)+lanePts(1)+lanePts(2);
+    $("rMainPts").textContent=fmt(mp)+" / "+fmt(MAIN);
+    $("rMainFill").style.width=Math.min(100,mp/MAIN*100)+"%";
+    $("rMainTiers").textContent=MTIERS.map(t=>t[1]+(mp>=MAIN*t[0]?" ✓":" "+short(MAIN*t[0]-mp))).join("   ");
+    $("rLanes").textContent="COL "+fmt(lanePts(0))+"   TRN "+fmt(lanePts(1))+"   DEF "+fmt(lanePts(2));
+    let pay=0,cm=0,rm=0,gn=0,er=0,n=0;
+    S.missions.forEach(x=>{if(!live(x))return;pay+=x.runs*x.pay;cm+=x.runs*x.keep*S.yield;rm+=x.runs*x.rmc;gn+=x.runs*x.guns;er+=x.runs*earnedOf(x);n+=x.runs});
+    totals={runs:n,earned:er};
+    $("vPay").textContent=short(pay);
+    $("vCmat").textContent=fmt(cm)+" SCU";
+    $("vRmc").textContent=fmt(rm)+" SCU";
+    $("vGuns").textContent=fmt(gn);
+    $("vEarned").textContent=(er>0?"+":"")+short(er);
+    tick();
+  }
+  function tick(){
+    $("rClock").textContent=new Date().toLocaleTimeString("en-AU",{hour:"2-digit",minute:"2-digit",hour12:false});
+    const ms=elapsed(),on=!!S.timer.start;
+    $("rTimer").textContent=hms(ms);
+    $("rTimer").classList.toggle("live",on);
+    $("rState").textContent=on?"● LIVE":(ms?"PAUSED":"READY");
+    $("rState").classList.toggle("live",on);
+    const hrs=ms/3.6e6;
+    $("vRph").textContent=hrs>0.01&&totals.runs?(totals.runs/hrs).toFixed(1):"–";
+    $("vAph").textContent=hrs>0.01&&totals.runs?short(totals.earned/hrs):"–";
+    if(!overlay) $("btnTimer").textContent=on?"Pause timer":(ms?"Resume timer":"Start timer");
+  }
+  setInterval(tick,1000);
+
+  // ---------- actions ----------
+  function addRun(n){const m=S.missions[S.active];m.runs=Math.max(0,m.runs+n);save();render();syncRuns();toast(n>0?"Run logged · "+m.name:"Run removed")}
+  function nextMission(){for(let i=1;i<=6;i++){const j=(S.active+i)%6;if(live(S.missions[j])){S.active=j;break}}save();render();buildSelect()}
+  function toggleTimer(){if(S.timer.start){S.timer.acc+=Date.now()-S.timer.start;S.timer.start=null}else S.timer.start=Date.now();save();tick()}
+  function resetTimer(){S.timer={acc:0,start:null};save();tick();toast("Timer reset")}
+
+  if(overlay){ render(); return; }
+
+  // ---------- editor ----------
+  const COLS=["pts","pay","hand","keep","rmc","guns","runs"];
+  function buildTable(){
+    $("mBody").innerHTML=S.missions.map((m,i)=>`<tr>
+      <td><input type="text" id="mName${i}" value="${m.name.replace(/"/g,"&quot;")}" aria-label="Mission ${i+1} name"></td>
+      <td><select id="mLane${i}" aria-label="Mission ${i+1} lane">${LANES.map((l,k)=>`<option value="${k}"${k===m.lane?" selected":""}>${l}</option>`).join("")}</select></td>
+      ${COLS.map(c=>`<td><input type="number" id="m_${c}${i}" value="${m[c]}" min="0" step="${c==="pay"?1000:1}" aria-label="Mission ${i+1} ${c}"></td>`).join("")}
+    </tr>`).join("");
+    S.missions.forEach((m,i)=>{
+      $("mName"+i).addEventListener("input",e=>{m.name=e.target.value;save();render();buildSelect()});
+      $("mLane"+i).addEventListener("change",e=>{m.lane=+e.target.value;save();render()});
+      COLS.forEach(c=>$("m_"+c+i).addEventListener("input",e=>{m[c]=c==="runs"?Math.round(num(e.target.value)):num(e.target.value);save();render()}));
+    });
+  }
+  function syncRuns(){S.missions.forEach((m,i)=>{const el=$("m_runs"+i);if(el&&document.activeElement!==el)el.value=m.runs})}
+  function buildSelect(){
+    fixActive();
+    $("active").innerHTML=S.missions.map((m,i)=>live(m)?`<option value="${i}"${i===S.active?" selected":""}>${m.name} · ${LANES[m.lane]}</option>`:"").join("");
+  }
+  function buildFields(){
+    $("cYield").value=S.yield;$("cCmat").value=S.cmat;$("cRmc").value=S.rmc;$("cGun").value=S.gun;
+    [0,1,2].forEach(l=>$("s"+(l+1)).value=S.start[l]);
+  }
+  [["cYield","yield"],["cCmat","cmat"],["cRmc","rmc"],["cGun","gun"]].forEach(([id,k])=>$(id).addEventListener("input",e=>{S[k]=num(e.target.value);save();render()}));
+  [0,1,2].forEach(l=>$("s"+(l+1)).addEventListener("input",e=>{S.start[l]=num(e.target.value);save();render()}));
+  $("active").addEventListener("change",e=>{S.active=+e.target.value;save();render()});
+  $("btnRun").addEventListener("click",()=>addRun(1));
+  $("btnUndo").addEventListener("click",()=>addRun(-1));
+  $("btnTimer").addEventListener("click",toggleTimer);
+  $("btnTimerReset").addEventListener("click",resetTimer);
+
+  // two-click confirm (the page can't show confirm dialogs)
+  function confirmBtn(id,label,fn){
+    let armed=false,h;
+    $(id).addEventListener("click",()=>{
+      if(!armed){armed=true;$(id).textContent="Click again to confirm";$("confirmMsg").textContent="";h=setTimeout(()=>{armed=false;$(id).textContent=label},3000);return}
+      clearTimeout(h);armed=false;$(id).textContent=label;fn();
+    });
+  }
+  confirmBtn("btnResetRuns","Reset all runs",()=>{S.missions.forEach(m=>m.runs=0);save();buildTable();render();toast("All runs reset")});
+  confirmBtn("btnDefaults","Restore starting values",()=>{const t=S.timer;S=clone(DEFAULTS);S.timer=t;save();buildTable();buildFields();buildSelect();render();toast("Starting values restored")});
+
+  document.addEventListener("keydown",e=>{
+    if(e.target.closest("input,select,textarea")||e.ctrlKey||e.metaKey||e.altKey)return;
+    const k=e.key.toLowerCase();
+    if(k===" "){e.preventDefault();addRun(1)}
+    else if(k==="backspace"){e.preventDefault();addRun(-1)}
+    else if(k==="m"){e.preventDefault();nextMission()}
+    else if(k==="t"){e.preventDefault();toggleTimer()}
+  });
+
+  const u=new URL(location.href);u.search="?overlay";u.hash="";$("obsUrl").textContent=u.toString();
+
+  buildTable();buildFields();buildSelect();render();
+})();
+</script>
+</body>
+</html>
