@@ -4,6 +4,7 @@ Free planning tools for Star Citizen, built by [Vonnie In The Verse](https://www
 
 Live at **https://vonnie-intheverse.github.io/sc-tools/**
 SCA - **https://vonnie-intheverse.github.io/sc-tools/sca/**
+Discovery Month Tracker - **https://vonnie-intheverse.github.io/sc-tools/iasi-tracker/**
 
 This is an unofficial Star Citizen fan site, not affiliated with the Cloud Imperium
 group of companies. All content on this site not authored by its host or users are
@@ -19,6 +20,8 @@ CIG's fan content policy, and because that's the point.
 | `index.html` | Hub — lists the tools |
 | `exchange-matrix.html` | Wikelo tracker, channel branding, farm-rate/time layer |
 | `sca/index.html` | Same tracker for Southern Cross Alliance, no channel branding |
+| `iasi-tracker/index.html` | Discovery Month event tracker: lanes, main track, next reward, timer, aUEC/hr, OBS overlay mode (`?overlay`) |
+| `iasi-tracker/IASI_Overlay.ahk` | Desktop version of the event tracker (AutoHotkey v2) with in-game hotkeys |
 | `data/recipes.js` | **All Wikelo recipe data. Patch day: edit this file only.** |
 | `data/prices.json` | Written by the UEX workflow (optional, see below) |
 
@@ -30,6 +33,19 @@ CIG's fan content policy, and because that's the point.
 4. Commit. Pages redeploys in a minute or two.
 
 Both trackers read the same file, so that's one edit, not three.
+
+## Discovery Month Tracker
+
+The event tracker keeps its own data, separate from the Wikelo files.
+
+- **Starting missions and prices:** the `DEFAULTS` block near the top of the script in
+  `iasi-tracker/index.html`, and the `DEFAULTS` block near the top of `IASI_Overlay.ahk`.
+  Visitors' own edits save to their browser (or a local `.ini` for the desktop version),
+  so changing the defaults only affects new users.
+- **Rewards:** the `REWARDS` block in `index.html` and `LANE_REWARDS` in the `.ahk`.
+  Replace "Unnamed" entries once CIG names the items.
+- **Keep the folder name `iasi-tracker`.** Videos and posts already link to that address.
+- Browsers may warn when downloading the `.ahk` because it's a script. That's expected.
 
 ## Farm rates
 
