@@ -1,6 +1,6 @@
-# IASI Event Tracker
+# Discovery Month Tracker
 
-Free run tracker for the Star Citizen 4.10.2 IASI event, by Vonnie in the Verse.
+Free run tracker for the Star Citizen 4.10.2 RSI Discovery Month event (the IASI event in PTU), by Vonnie in the Verse.
 
 **Live:** https://vonnie-intheverse.github.io/sc-tools/iasi-tracker/
 
@@ -11,6 +11,7 @@ Free run tracker for the Star Citizen 4.10.2 IASI event, by Vonnie in the Verse.
 - Main-track bar out of 30,000 (M1 15%, M2 33%, M3 80%, M4 100%)
 - Session timer, clock, runs per hour and aUEC per hour
 - Earned so far: payout + kept SCU refined to CMAT + RMC + weapons, at your own prices
+- Shows the next reward for your lane and the main track
 - Saves in your browser, so a refresh doesn't lose anything
 
 ## Two versions

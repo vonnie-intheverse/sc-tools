@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>IASI Event Tracker</title>
-<meta name="description" content="Free run tracker for the Star Citizen IASI event: lane and main-track progress, session timer, aUEC per hour, and an OBS overlay mode.">
+<title>Discovery Month Tracker</title>
+<meta name="description" content="Free run tracker for the Star Citizen RSI Discovery Month event: lane and main-track progress, session timer, aUEC per hour, and an OBS overlay mode.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap">
@@ -68,6 +68,16 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,40px);lin
 .pair{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:4px;font-size:13px}
 .pair span{color:var(--muted)}
 .pair b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.next{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.35}
+.next b{color:var(--orange);font-weight:600}
+.next.main b{color:var(--cyan)}
+.rw{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px 24px}
+.rw em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.rw h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);margin:0 0 6px;font-weight:600;text-transform:uppercase}
+.rw ol{margin:0;padding-left:0;list-style:none;display:grid;gap:4px;font-size:13px}
+.rw li{display:grid;grid-template-columns:30px 1fr;gap:6px}
+.rw li span{font-family:var(--mono);font-size:11px;color:var(--orange)}
+.rw .mt li span{color:var(--cyan)}
 .earned{background:var(--box);display:flex;justify-content:space-between;align-items:center;padding:8px 12px}
 .earned span{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted)}
 .earned b{font-family:var(--display);font-weight:700;font-size:24px;color:var(--cyan);font-variant-numeric:tabular-nums}
@@ -114,8 +124,8 @@ body.overlay .ro{width:360px}
 <div class="page">
   <header class="top">
     <div>
-      <div class="eyebrow">Star Citizen 4.10.2 · IASI Event</div>
-      <h1>IASI Event Tracker</h1>
+      <div class="eyebrow">Star Citizen 4.10.2 · RSI Discovery Month</div>
+      <h1>Discovery Month Tracker</h1>
       <p class="lede">Log your runs, watch each lane fill, and see what you're really earning per hour. Everything saves in your browser.</p>
     </div>
     <nav class="toplinks"><a href="../">All tools</a><a href="IASI_Overlay.ahk" download>Desktop overlay (AutoHotkey)</a></nav>
@@ -124,14 +134,16 @@ body.overlay .ro{width:360px}
   <div class="grid">
     <!-- READOUT -->
     <section class="ro" aria-live="polite" aria-label="Event progress readout">
-      <div class="ro-h"><span class="m" id="rName">–</span><span class="b">IASI · 4.10.2</span></div>
+      <div class="ro-h"><span class="m" id="rName">–</span><span class="b">DISCOVERY · 4.10.2</span></div>
       <div class="timeline"><span class="clock" id="rClock">--:--</span><span class="timer" id="rTimer">0:00:00</span><span class="state" id="rState">READY</span></div>
       <div class="runs"><span class="n" id="rRuns">0</span><span class="of" id="rOf">/ – runs</span><span class="lp"><span id="rLaneLbl">COLLECTION</span> POINTS<b id="rLanePts">0 / 10,000</b></span></div>
       <div class="bar" id="rBar"><div class="fill" id="rFill"></div></div>
       <div class="chips" id="rChips"></div>
+      <div class="next" id="rNext"></div>
       <div class="mainrow"><span>MAIN TRACK</span><b id="rMainPts">0 / 30,000</b></div>
       <div class="bar main"><div class="fill" id="rMainFill"></div></div>
       <div class="small" id="rMainTiers"></div>
+      <div class="next main" id="rMainNext"></div>
       <div class="small" id="rLanes"></div>
       <div class="pairs">
         <div class="pair"><span>Payouts</span><b id="vPay">0</b></div>
@@ -190,6 +202,12 @@ body.overlay .ro{width:360px}
           <button class="btn ghost" id="btnDefaults" type="button">Restore starting values</button>
           <span class="note" id="confirmMsg"></span>
         </div>
+      </section>
+
+      <section class="card">
+        <h2>Rewards</h2>
+        <p class="note">From the official Discovery Month reward screen. Items shown without a name in-game are marked "unnamed" until CIG confirms them.</p>
+        <div class="rw" id="rwList"></div>
       </section>
 
       <section class="card">
@@ -265,6 +283,14 @@ body.overlay .ro{width:360px}
   function fixActive(){ if(!live(S.missions[S.active])){const i=S.missions.findIndex(live); S.active=i<0?0:i;} }
 
   // ---------- readout ----------
+  const REWARDS={
+    lanes:[
+      ["Unnamed ship + S2 Grade B Radar","Mantis HND & SPD","S3 Grade B Radar","Unnamed weapon"],
+      ["Unnamed ship + S2 Grade B Cooler","Zeus Mk II HND & SPD","S3 Grade B Cooler","Unnamed weapon"],
+      ["Unnamed ship + S2 Grade B Powerplant","Meteor HND & SPD","S3 Grade B Powerplant","Unnamed weapon"]
+    ],
+    main:["S1 Grade B Cooler, Powerplant & Radar","Unnamed ground vehicle","Unnamed ship + Aurora Mk II HND & SPD","Unnamed ship, armour set, Constellation Mk IV HND & SPD + S1–S3 Grade A Powerplants"]
+  };
   const TIERS=[[.2,"T1"],[.4,"T2"],[.65,"T3"],[1,"CAP"]];
   const MTIERS=[[.15,"M1"],[.33,"M2"],[.8,"M3"],[1,"M4"]];
   TIERS.forEach(t=>{const s=document.createElement("span");s.className="tick";s.style.left=`calc(${t[0]*100}% - ${t[0]===1?2:1}px)`;$("rBar").appendChild(s)});
@@ -287,6 +313,10 @@ body.overlay .ro{width:360px}
     const mp=lanePts(0)+lanePts(1)+lanePts(2);
     $("rMainPts").textContent=fmt(mp)+" / "+fmt(MAIN);
     $("rMainFill").style.width=Math.min(100,mp/MAIN*100)+"%";
+    {const i=TIERS.findIndex(t=>lp<CAP*t[0]);
+     $("rNext").innerHTML=i<0?"<b>LANE DONE</b> · all four rewards unlocked":`NEXT <b>${TIERS[i][1]}</b> · ${REWARDS.lanes[m.lane][i]}`;}
+    {const i=MTIERS.findIndex(t=>mp<MAIN*t[0]);
+     $("rMainNext").innerHTML=i<0?"<b>MAIN TRACK DONE</b>":`NEXT <b>${MTIERS[i][1]}</b> · ${REWARDS.main[i]}`;}
     $("rMainTiers").textContent=MTIERS.map(t=>t[1]+(mp>=MAIN*t[0]?" ✓":" "+short(MAIN*t[0]-mp))).join("   ");
     $("rLanes").textContent="COL "+fmt(lanePts(0))+"   TRN "+fmt(lanePts(1))+"   DEF "+fmt(lanePts(2));
     let pay=0,cm=0,rm=0,gn=0,er=0,n=0;
@@ -373,6 +403,11 @@ body.overlay .ro{width:360px}
   });
 
   const u=new URL(location.href);u.search="?overlay";u.hash="";$("obsUrl").textContent=u.toString();
+
+  const pts=(c,p)=>fmt(c*p);
+  $("rwList").innerHTML=
+    `<div class="mt"><h3>Main track</h3><ol>${REWARDS.main.map((x,i)=>`<li><span>${MTIERS[i][1]}</span><div>${x}<em> · ${pts(MAIN,MTIERS[i][0])} pts</em></div></li>`).join("")}</ol></div>`+
+    LANES.map((l,k)=>`<div><h3>${l}</h3><ol>${REWARDS.lanes[k].map((x,i)=>`<li><span>${TIERS[i][1]}</span><div>${x}<em> · ${pts(CAP,TIERS[i][0])} pts</em></div></li>`).join("")}</ol></div>`).join("");
 
   buildTable();buildFields();buildSelect();render();
 })();

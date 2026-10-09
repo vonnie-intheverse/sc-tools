@@ -3,7 +3,9 @@
 InstallKeybdHook()
 
 ; =====================================================================
-;  IASI Event Overlay v2  -  Vonnie in the Verse
+;  Discovery Month Overlay v2  -  Vonnie in the Verse
+;  (RSI Discovery Month event, 4.10.2. Window keeps the name "IASI Overlay"
+;  so existing OBS Window Capture sources still find it.)
 ;  Free fan tool. Not affiliated with Cloud Imperium Games.
 ;  Starting values are from 4.10.2 PTU testing: check them on live.
 ;  Always-on-top, click-through readout for the 4.10.2 IASI event.
@@ -29,7 +31,7 @@ HK_MOVE  := "F7"
 OPACITY  := 235      ; 0-255, lower = more see-through
 
 ; ---------- LOOK -----------------------------------------------------
-BUILD := "4.10.2 RC1"   ; shown top-right of the panel
+BUILD := "DISCOVERY 4.10.2"   ; shown top-right of the panel
 C_BG := "0E141B", C_BOX := "16202A", C_LINE := "2A3846", C_FG := "EEF3F7", C_MUTED := "93A3B4"
 C_ACCENT := "FF8A3D", C_CYAN := "5CC8E8", C_RED := "FF6B6B", C_HIT := "15343F", C_DIM := "5A6878"
 
@@ -51,6 +53,12 @@ DEFAULTS := [
     ["Transport",              2, 0,   0,     0,  0,  0, 0],
     ["Defence",                3, 0,   0,     0,  0,  0, 0]
 ]
+
+; ---------- REWARDS (from the official Discovery Month reward screen) ----
+LANE_REWARDS := [
+    ["Ship + S2 Grade B Radar",      "Mantis HND & SPD",     "S3 Grade B Radar",      "Weapon"],
+    ["Ship + S2 Grade B Cooler",     "Zeus Mk II HND & SPD", "S3 Grade B Cooler",     "Weapon"],
+    ["Ship + S2 Grade B Powerplant", "Meteor HND & SPD",     "S3 Grade B Powerplant", "Weapon"]
 ]
 
 ; ---------- SETUP ----------------------------------------------------
@@ -180,7 +188,7 @@ A_TrayMenu.Insert("5&", "Reset all runs", (*) => ResetRuns())
 A_TrayMenu.Insert("6&", "Reset timer", (*) => ResetTimer())
 A_TrayMenu.Insert("7&")
 A_TrayMenu.Default := "Edit missions && values..."
-A_IconTip := "IASI Event Overlay"
+A_IconTip := "Discovery Month Overlay"
 
 OnMessage(0x201, OnLeftDown)
 OnExit(SaveAll)
@@ -271,7 +279,13 @@ Update() {
     mp := MainPts(), mt := CFG["MAIN"]
     tMainPts.Value := Fmt(mp) " / " Fmt(mt)
     progMain.Value := Round(Min(mp, mt) / mt * 1000)
-    tMainTiers.Value := TierLine(mp, mt, [[0.15, "M1"], [0.33, "M2"], [0.8, "M3"], [1.0, "M4"]], 0)
+    nxt := "LANE DONE"
+    for idx, pc in TICKPCT
+        if (lp < cap * pc) {
+            nxt := "NEXT " names[idx] " · " LANE_REWARDS[l][idx]
+            break
+        }
+    tMainTiers.Value := nxt
     tLanes.Value := "COL " Fmt(LanePts(1)) "   TRN " Fmt(LanePts(2)) "   DEF " Fmt(LanePts(3))
 
     pay := 0, cm := 0, rm := 0, gn := 0, nt := 0, n := 0
